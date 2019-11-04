@@ -21,15 +21,15 @@ export class HomeRepository {
         return new Promise((resolve, reject) => {
             axios.get(`${this.url}/home/${userID}/bio`, this.config)                     //prepare to switch this link
             .then(resp => resolve(resp.data))
-            .catch(resp => {console.log("getBio failed: supply bio "+resp); resolve([{user_bio:"Hey guys, I'm a sport enthusiast who enjoys stretching everyday. Yes."}])})
+            .catch(resp => {console.log("getBio failed: supply bio "+resp); resolve([{user_bio:"Hi everyone, I am a mother of 23 that hates cooking."}])})
         });
     }
 
     getWorkouts(userID) {                                                            // this will probably need changing too
         return new Promise((resolve, reject) => {                                   // this just gets a list of custom workouts
-            axios.get(`${this.url}/home/${userID}/user_workouts`, this.config)
+            axios.get(`${this.url}/home/${userID}/user_recent`, this.config)
             .then(resp => resolve(resp.data))
-            .catch(resp => {console.log("getWorkouts failed: "+resp); resolve([{workout_id:107, workout_name:"Jimbo's stretch routing", workout_desc:"a fun workout that embiggens you" },{workout_id:102,workout_desc:"An upper body. workout", workout_name:"Arm Hard Work" }])})
+            .catch(resp => {console.log("getRecent failed: "+resp); resolve([{workout_id:107, workout_name:"Jimbo's Fried Frog legs", workout_desc:"Homemade recipe from the Roadkill Grill" },{workout_id:102,workout_desc:"Its like tofu but good", workout_name:"Chicken masala" }])})
         })
 
     }
@@ -45,9 +45,9 @@ export class HomeRepository {
 
     getFavorites(userID) {
         return new Promise((resolve, reject) => {
-            axios.get(`${this.url}/home/${userID}/favorite_workout`, this.config)               //prepare to switch this link
+            axios.get(`${this.url}/home/${userID}/favorite_recipe`, this.config)               //prepare to switch this link
             .then(resp => resolve(resp.data))
-            .catch(resp => {console.log("getFavorites failed: "+resp); resolve([{workout_id:107, workout_name:"Jimbo's stretch routing", workout_desc:"a fun workout that embiggens you" },{workout_id:102,workout_desc:"An upper body. workout", workout_name:"Arm Hard Work" }])})
+            .catch(resp => {console.log("getFavorites failed: "+resp); resolve([{workout_id:107, workout_name:"Jimbo's Fried Frog legs", workout_desc:"Homemade recipe from the Roadkill Grill" },{workout_id:102,workout_desc:"Its like tofu but good", workout_name:"Chicken masala" }])})
         });
     }
 }
