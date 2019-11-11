@@ -25,19 +25,10 @@ export class HomeRepository {
         });
     }
 
-    getWorkouts(userID) {                                                            // this will probably need changing too
-        return new Promise((resolve, reject) => {                                   // this just gets a list of custom workouts
-            axios.get(`${this.url}/home/${userID}/user_recent`, this.config)
-            .then(resp => resolve(resp.data))
-            .catch(resp => {console.log("getRecent failed: "+resp); resolve([{workout_id:107, workout_name:"Jimbo's Fried Frog legs", workout_desc:"Homemade recipe from the Roadkill Grill" },{workout_id:102,workout_desc:"Its like tofu but good", workout_name:"Chicken masala" }])})
-        })
-
-    }
-
 //favorite is one or zero
-    setFavorite(userID, workoutID, favorite) {
+    setFavorite(userID, recipeID, favorite) {
         return new Promise((resolve, reject) => {
-            axios.put(`${this.url}/exercises/${userID}/workout_id/${workoutID}/favorite/${favorite}`, workoutID, this.config)
+            axios.put(`${this.url}/exercises/${userID}/recipe_id/${recipeID}/favorite/${favorite}`, recipeID, this.config)
             .then(resp => resolve(resp.data))
             .catch(resp => console.log("setFavorite failed: "+resp))
         });
@@ -47,7 +38,7 @@ export class HomeRepository {
         return new Promise((resolve, reject) => {
             axios.get(`${this.url}/home/${userID}/favorite_recipe`, this.config)               //prepare to switch this link
             .then(resp => resolve(resp.data))
-            .catch(resp => {console.log("getFavorites failed: "+resp); resolve([{workout_id:107, workout_name:"Jimbo's Fried Frog legs", workout_desc:"Homemade recipe from the Roadkill Grill" },{workout_id:102,workout_desc:"Its like tofu but good", workout_name:"Chicken masala" }])})
+            .catch(resp => {console.log("getFavorites failed: "+resp); resolve([{recipe_id:107, recipe_name:"Jimbo's Fried Frog legs", recipe_desc:"Homemade recipe from the Roadkill Grill" },{recipe_id:102,recipe_desc:"Its like tofu but good", recipe_name:"Chicken masala" }])})
         });
     }
 }

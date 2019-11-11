@@ -14,13 +14,13 @@ function FormOptions(props){
     </>
 }
 
-function WorkoutButtons(props){
+function RecipeButtons(props){
 
   return <>
-  {props.workout.map((wrkt) =>
+  {props.recipe.map((wrkt) =>
 
     <Link className="btn btn-info btn-m m-1" to={{
-        pathname: `/workoutpage/${wrkt[0]}`,
+        pathname: `/recipepage/${wrkt[0]}`,
         state: {
           "accountId": props.accountId
         }
@@ -48,7 +48,7 @@ class AccountHome extends Component {
     this.state = {
       avatar: '',
       bio: '',
-      workouts: [],
+      recipes: [],
       favorites: [],
       history: [],
       addOption: "Add"
@@ -61,18 +61,10 @@ class AccountHome extends Component {
 
     this.repo.getProfilePic(this.props.location.state.accountId).then(pic => this.setState({avatar:pic[0].avatar}));
     this.repo.getBio(this.props.location.state.accountId).then(info => this.setState({bio: info[0].user_bio }));
-    this.repo.getWorkouts(this.props.location.state.accountId).then(wrkts => {
-        var temp=[]
-        for(let workout of wrkts){
-          temp.push([workout.workout_id, workout.workout_name, workout.workout_desc])
-        }
-        this.setState({workouts: temp })
-      }
-    );
     this.repo.getFavorites(this.props.location.state.accountId).then(wrkts => {
         var temp=[]
-        for(let workout of wrkts){
-          temp.push([workout.workout_id, workout.workout_name, workout.workout_desc])
+        for(let recipe of wrkts){
+          temp.push([recipe.recipe_id, recipe.recipe_name, recipe.recipe_desc])
         }
         this.setState({favorites: temp })
       }
@@ -117,26 +109,33 @@ class AccountHome extends Component {
                 <Col xs={12} sm={6} md={5} lg={5} xl={4}>                                 {/* Center Timeline */}
                   <Row>
                     {<Link
-                    style={{maxWidth: '100%', borderTop: '2em', borderBottom:'2em'}} 
+                    style={{maxWidth: '100%'}} 
                     className="btn btn-success btn-lg" 
                     to={{
-                      pathname: '/workoutgen',
+                      pathname: '/recipegen',
                       state: {
                         "accountId": this.props.location.state.accountId
                       }
                     }}>
                     Recipe Search</Link>  }
                   </Row>
-                  
-                  <Row><h2 className="details" id="customs">Recents</h2></Row>
-                  <Row>
-                  <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.workouts}/>
+                  <Row style={{marginTop:'2em'}}>
+                    {<Link
+                    style={{maxWidth: '100%'}}
+                    className ="btn btn-secondary btn-lg"
+                    to={{
+                      pathname: '/home',
+                      state:{
+                        "accountId": this.props.location.state.accountId
+                      }
+                    }}
+                    >Ingredients List</Link>}
                   </Row>
                 </Col>
                 <Col xs ={12} sm={6} md={5} lg={5} xl={4}>
                   <Row><h2 className="details" id="customs">Favorites</h2></Row>
                   <Row>
-                    <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.favorites}/>
+                    <RecipeButtons accountId={this.props.location.state.accountId} recipe={this.state.favorites}/>
                   </Row> 
                 </Col>
 
