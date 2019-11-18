@@ -4,6 +4,7 @@ import WorkoutGenerator from './components/WorkoutGenerator';
 import WorkoutPage from './components/WorkoutPage';
 import WorkoutPageEdit from './components/WorkoutPageEdit';
 import AccountHome from './components/accountPage/AccountHome';
+import IngredientsPage from './components/accountPage/IngredientsPage';
 
 
 export const ROUTES = [
@@ -13,6 +14,7 @@ export const ROUTES = [
   { path: '/workoutgen', component: WorkoutGenerator},
   { path: '/recipepage/:recipeId', component: WorkoutPage},
   { path: '/', component: Login},
+  { path: '/ingredients', component: IngredientsPage},
 ];
 
 export default ROUTES;

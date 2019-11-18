@@ -8,6 +8,8 @@ import Timeline from './Timeline';
 import { Link } from 'react-router-dom';
 import { Form, Modal} from 'react-bootstrap';
 
+import IngredientsPage from './IngredientsPage'
+
 function FormOptions(props){
   return <>
   {props.opts.map((opt) => <option value={opt}>{opt}</option>)  }
@@ -123,11 +125,13 @@ class AccountHome extends Component {
                     {<Link
                     style={{maxWidth: '100%'}}
                     className ="btn btn-secondary btn-lg"
+                    recipe= {this.state.recipes}
                     to={{
-                      pathname: '/home',
+                      pathname: '/ingredients',
                       state:{
-                        "accountId": this.props.location.state.accountId
+                        "accountId": this.props.location.state.accountId,
                       }
+                     
                     }}
                     >Ingredients List</Link>}
                   </Row>
