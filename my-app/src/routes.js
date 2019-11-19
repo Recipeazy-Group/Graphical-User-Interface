@@ -8,9 +8,11 @@ import IngredientsPage from './components/accountPage/IngredientsPage';
 
 
 export const ROUTES = [
-  { path: '/Dashboard', component: Dashboard},
-  { path: '/Splash', component: Splash},
-  { path: '/Tracker', component: Tracker},
+  { path: '/login', component: Login},
+  { path: '/signup', component: Signup},
+  { path: '/home', component: AccountHome},
+  { path: '/workoutgen', component: WorkoutGenerator},
+  { path: '/recipepage/:recipeId', component: WorkoutPage},
   { path: '/', component: Login},
   { path: '/ingredients', component: IngredientsPage},
 ];
