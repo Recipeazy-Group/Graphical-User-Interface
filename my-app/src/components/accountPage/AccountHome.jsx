@@ -8,10 +8,38 @@ import Timeline from './Timeline';
 import { Link } from 'react-router-dom';
 import { Form, Modal} from 'react-bootstrap';
 
+const fetch = require("node-fetch");
+
+var url = "http://ec2-18-218-75-228.us-east-2.compute.amazonaws.com";
+
 function FormOptions(props){
   return <>
   {props.opts.map((opt) => <option value={opt}>{opt}</option>)  }
     </>
+}
+//Add User ingredient
+async function addUserIngredient(email, ingr) {
+	let head = new Headers();
+	head.append('Email', email);
+	head.append('IngredientName', ingr);
+
+	const init = {
+		method: 'POST',
+		headers: head
+	}
+
+	const response = await fetch(url + '/UserIngredient/new', init)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Could not connect');
+			}
+		})
+		.catch(error => { console.log(error); });
+	return response;
+}
+
+function refreshPage() {
+  window.location.reload(false);
 }
 
 function WorkoutButtons(props){
@@ -19,7 +47,7 @@ function WorkoutButtons(props){
   return <>
   {props.workout.map((wrkt) =>
 
-    <Link className="btn btn-info btn-m m-1" to={{
+    <Link className="btn btn-info btn-m btn-dark m-1" to={{
         pathname: `/workoutpage/${wrkt[0]}`,
         state: {
           "accountId": props.accountId
@@ -27,17 +55,12 @@ function WorkoutButtons(props){
       }}>
 
       <h5>{wrkt[1]}</h5>
-
-        {wrkt[2]}
     </Link>
-
-
-
-
 )  }
     </>
 
 }
+
 class AccountHome extends Component {
 
   repo = new HomeRepository();
@@ -50,8 +73,8 @@ class AccountHome extends Component {
       bio: '',
       workouts: [],
       favorites: [],
-      history: [],
-      addOption: "Add"
+      addOption: "Add",
+      ningred: ''
     }
   }
 
@@ -59,12 +82,10 @@ class AccountHome extends Component {
 
     console.log("here is the passed in accountId: "+this.props.location.state.accountId)
 
-    this.repo.getProfilePic(this.props.location.state.accountId).then(pic => this.setState({avatar:pic[0].avatar}));
-    this.repo.getBio(this.props.location.state.accountId).then(info => this.setState({bio: info[0].user_bio }));
     this.repo.getWorkouts(this.props.location.state.accountId).then(wrkts => {
         var temp=[]
         for(let workout of wrkts){
-          temp.push([workout.workout_id, workout.workout_name, workout.workout_desc])
+          temp.push([workout.workout_id])
         }
         this.setState({workouts: temp })
       }
@@ -72,16 +93,11 @@ class AccountHome extends Component {
     this.repo.getFavorites(this.props.location.state.accountId).then(wrkts => {
         var temp=[]
         for(let workout of wrkts){
-          temp.push([workout.workout_id, workout.workout_name, workout.workout_desc])
+          temp.push([workout.workout_id, workout.workout_name])
         }
         this.setState({favorites: temp })
       }
     );
-
-    // this.repo.getFriends(this.props.userID).then(buddies => {
-    //   this.setState({buddies})
-    // });
-
   }
 
   render() {
@@ -92,26 +108,6 @@ class AccountHome extends Component {
             <Container id="enclosed" style={{maxWidth: '100%', marginTop: '1em', marginLeft: '1em'}}>               {/* Outer Container */}
 
               <Row>
-
-                <Col xs={12} sm={6} md={4} lg={4} xl={3}>                      {/* Left Side */}
-
-                  <Row>                                   {/* Row 1 */}
-                     <img
-                        style={{maxWidth: '100%', height: 'auto'}}
-                        className="mr-3"
-                        src={this.state.avatar}
-                        alt="Profile"
-                      />
-                  </Row>
-                  <Row>
-                      <h3 className="details">Bio</h3>
-                  </Row>
-                  <Row>
-                    <p align="left">
-                      {this.state.bio}
-                    </p>
-                  </Row>
-                </Col>                                                          {/* Left Side Close */}
 
 
                 <Col xs={12} sm={6} md={5} lg={5} xl={4}>                                 {/* Center Timeline */}
@@ -127,17 +123,36 @@ class AccountHome extends Component {
                     }}>
                     Recipe Search</Link>  }
                   </Row>
-                  
-                  <Row><h2 className="details" id="customs">Recents</h2></Row>
-                  <Row>
-                  <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.workouts}/>
-                  </Row>
                 </Col>
                 <Col xs ={12} sm={6} md={5} lg={5} xl={4}>
                   <Row><h2 className="details" id="customs">Favorites</h2></Row>
                   <Row>
                     <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.favorites}/>
                   </Row> 
+                </Col>
+                <Col xs={12} sm={6} md={5} lg={5} xl={4}>
+                <Row><h2 className="details" id="customs">Ingredients</h2></Row>
+                  <Row>
+                  <table class = "table table-striped">
+      <thead>
+      </thead>
+      <tbody>
+        
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>
+          <input type="text" className='form-control' name="name"
+                  id="name" placeholder="Ingredient name"
+                  value={this.state.nname} onChange={e => this.setState({ningred: e.target.value})}></input>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    <button id = "addAccount" class = "btn btn-block btn-success" 
+            onClick = {e => addUserIngredient(this.state.accountId, this.state.ningred), refreshPage}>
+            Add Ingredient</button>
+                  </Row>
                 </Col>
 
               </Row>

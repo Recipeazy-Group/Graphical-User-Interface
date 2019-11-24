@@ -2,9 +2,7 @@
     box-sizing: border-box;
 }
 
-#enclosed {
 
-}
 
 .details {
     font-weight: bold;
@@ -12,8 +10,7 @@
 
 /* Small */
 @media (max-width: 575px) {
-    #enclosed {
-    }
+
 
 }
 
