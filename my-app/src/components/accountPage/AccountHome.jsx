@@ -42,10 +42,10 @@ function refreshPage() {
   window.location.reload(false);
 }
 
-function RecipeButtons(props){
+function WorkoutButtons(props){
 
   return <>
-  {props.recipe.map((wrkt) =>
+  {props.workout.map((wrkt) =>
 
     <Link className="btn btn-info btn-m btn-dark m-1" to={{
         pathname: `/workoutpage/${wrkt[0]}`,
@@ -71,7 +71,7 @@ class AccountHome extends Component {
     this.state = {
       avatar: '',
       bio: '',
-      recipes: [],
+      workouts: [],
       favorites: [],
       addOption: "Add",
       ningred: ''
@@ -82,7 +82,7 @@ class AccountHome extends Component {
 
     console.log("here is the passed in accountId: "+this.props.location.state.accountId)
 
-    this.repo.getWorkouts(this.props.location.state.accountId).then(wrkts => {
+    this.repo.getFavorites(this.props.location.state.accountId).then(wrkts => {
         var temp=[]
         for(let workout of wrkts){
           temp.push([workout.workout_id])
@@ -93,7 +93,7 @@ class AccountHome extends Component {
     this.repo.getFavorites(this.props.location.state.accountId).then(wrkts => {
         var temp=[]
         for(let workout of wrkts){
-          temp.push([workout.workout_id, workout.workout_name])
+          temp.push([workout.recipe_id, workout.recipe_name])
         }
         this.setState({favorites: temp })
       }
@@ -113,10 +113,10 @@ class AccountHome extends Component {
                 <Col xs={12} sm={6} md={5} lg={5} xl={4}>                                 {/* Center Timeline */}
                   <Row>
                     {<Link
-                    style={{maxWidth: '100%'}} 
+                    style={{maxWidth: '100%', borderTop: '2em', borderBottom:'2em'}} 
                     className="btn btn-success btn-lg" 
                     to={{
-                      pathname: '/recipegen',
+                      pathname: '/workoutgen',
                       state: {
                         "accountId": this.props.location.state.accountId
                       }
@@ -127,7 +127,7 @@ class AccountHome extends Component {
                 <Col xs ={12} sm={6} md={5} lg={5} xl={4}>
                   <Row><h2 className="details" id="customs">Favorites</h2></Row>
                   <Row>
-                    <RecipeButtons accountId={this.props.location.state.accountId} recipe={this.state.favorites}/>
+                    <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.favorites}/>
                   </Row> 
                 </Col>
                 <Col xs={12} sm={6} md={5} lg={5} xl={4}>
