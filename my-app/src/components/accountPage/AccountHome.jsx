@@ -14,6 +14,7 @@ function FormOptions(props){
     </>
 }
 
+
 function RecipeButtons(props){
 
   return <>
@@ -112,7 +113,7 @@ class AccountHome extends Component {
                     style={{maxWidth: '100%'}} 
                     className="btn btn-success btn-lg" 
                     to={{
-                      pathname: '/recipegen',
+                      pathname: '/workoutgen',
                       state: {
                         "accountId": this.props.location.state.accountId
                       }
