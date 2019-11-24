@@ -8,19 +8,46 @@ import Timeline from './Timeline';
 import { Link } from 'react-router-dom';
 import { Form, Modal} from 'react-bootstrap';
 
+const fetch = require("node-fetch");
+
+var url = "http://ec2-18-218-75-228.us-east-2.compute.amazonaws.com";
+
 function FormOptions(props){
   return <>
   {props.opts.map((opt) => <option value={opt}>{opt}</option>)  }
     </>
 }
+//Add User ingredient
+async function addUserIngredient(email, ingr) {
+	let head = new Headers();
+	head.append('Email', email);
+	head.append('IngredientName', ingr);
+
+	const init = {
+		method: 'POST',
+		headers: head
+	}
+
+	const response = await fetch(url + '/UserIngredient/new', init)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Could not connect');
+			}
+		})
+		.catch(error => { console.log(error); });
+	return response;
+}
+
+function refreshPage() {
+  window.location.reload(false);
+}
 
 
-function RecipeButtons(props){
-
+function WorkoutButtons(props){
   return <>
-  {props.recipe.map((wrkt) =>
+  {props.workout.map((wrkt) =>
 
-    <Link className="btn btn-info btn-m m-1" to={{
+    <Link className="btn btn-info btn-m btn-dark m-1" to={{
         pathname: `/recipepage/${wrkt[0]}`,
         state: {
           "accountId": props.accountId
@@ -28,17 +55,12 @@ function RecipeButtons(props){
       }}>
 
       <h5>{wrkt[1]}</h5>
-
-        {wrkt[2]}
     </Link>
-
-
-
-
 )  }
     </>
 
 }
+
 class AccountHome extends Component {
 
   repo = new HomeRepository();
@@ -49,10 +71,10 @@ class AccountHome extends Component {
     this.state = {
       avatar: '',
       bio: '',
-      recipes: [],
+      workouts: [],
       favorites: [],
-      history: [],
-      addOption: "Add"
+      addOption: "Add",
+      ningred: ''
     }
   }
 
@@ -60,21 +82,22 @@ class AccountHome extends Component {
 
     console.log("here is the passed in accountId: "+this.props.location.state.accountId)
 
-    this.repo.getProfilePic(this.props.location.state.accountId).then(pic => this.setState({avatar:pic[0].avatar}));
-    this.repo.getBio(this.props.location.state.accountId).then(info => this.setState({bio: info[0].user_bio }));
     this.repo.getFavorites(this.props.location.state.accountId).then(wrkts => {
         var temp=[]
-        for(let recipe of wrkts){
-          temp.push([recipe.recipe_id, recipe.recipe_name, recipe.recipe_desc])
+        for(let workout of wrkts){
+          temp.push([workout.workout_id])
+        }
+        this.setState({workouts: temp })
+      }
+    );
+    this.repo.getFavorites(this.props.location.state.accountId).then(wrkts => {
+        var temp=[]
+        for(let workout of wrkts){
+          temp.push([workout.recipe_id, workout.recipe_name])
         }
         this.setState({favorites: temp })
       }
     );
-
-    // this.repo.getFriends(this.props.userID).then(buddies => {
-    //   this.setState({buddies})
-    // });
-
   }
 
   render() {
@@ -86,31 +109,11 @@ class AccountHome extends Component {
 
               <Row>
 
-                <Col xs={12} sm={6} md={4} lg={4} xl={3}>                      {/* Left Side */}
-
-                  <Row>                                   {/* Row 1 */}
-                     <img
-                        style={{maxWidth: '100%', height: 'auto'}}
-                        className="mr-3"
-                        src={this.state.avatar}
-                        alt="Profile"
-                      />
-                  </Row>
-                  <Row>
-                      <h3 className="details">Bio</h3>
-                  </Row>
-                  <Row>
-                    <p align="left">
-                      {this.state.bio}
-                    </p>
-                  </Row>
-                </Col>                                                          {/* Left Side Close */}
-
 
                 <Col xs={12} sm={6} md={5} lg={5} xl={4}>                                 {/* Center Timeline */}
                   <Row>
                     {<Link
-                    style={{maxWidth: '100%'}} 
+                    style={{maxWidth: '100%', borderTop: '2em', borderBottom:'2em'}} 
                     className="btn btn-success btn-lg" 
                     to={{
                       pathname: '/workoutgen',
@@ -120,24 +123,36 @@ class AccountHome extends Component {
                     }}>
                     Recipe Search</Link>  }
                   </Row>
-                  <Row style={{marginTop:'2em'}}>
-                    {<Link
-                    style={{maxWidth: '100%'}}
-                    className ="btn btn-secondary btn-lg"
-                    to={{
-                      pathname: '/home',
-                      state:{
-                        "accountId": this.props.location.state.accountId
-                      }
-                    }}
-                    >Ingredients List</Link>}
-                  </Row>
                 </Col>
                 <Col xs ={12} sm={6} md={5} lg={5} xl={4}>
                   <Row><h2 className="details" id="customs">Favorites</h2></Row>
                   <Row>
-                    <RecipeButtons accountId={this.props.location.state.accountId} recipe={this.state.favorites}/>
+                    <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.favorites}/>
                   </Row> 
+                </Col>
+                <Col xs={12} sm={6} md={5} lg={5} xl={4}>
+                <Row><h2 className="details" id="customs">Ingredients</h2></Row>
+                  <Row>
+                  <table class = "table table-striped">
+      <thead>
+      </thead>
+      <tbody>
+                        {/* This is where you will map ingredients in tr tags*/}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>
+          <input type="text" className='form-control' name="name"
+                  id="name" placeholder="Ingredient name" style={{maxWidth:'70%'}}
+                  value={this.state.nname} onChange={e => this.setState({ningred: e.target.value})}></input>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    <button id = "addAccount" class = "btn btn-block btn-success" 
+            onClick = {e => addUserIngredient(this.state.accountId, this.state.ningred), refreshPage}>
+            Add Ingredient</button>
+                  </Row>
                 </Col>
 
               </Row>

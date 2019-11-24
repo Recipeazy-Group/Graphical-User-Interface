@@ -144,7 +144,6 @@ export class WorkoutPage extends React.Component{
                     for(let i=0;i<wrkt.length;i++){
                       temp.push(new Exercise(wrkt[i].exercise_name, wrkt[i].exercise_desc,
                         wrkt[i].exercise_image, wrkt[i].default_length, wrkt[i].set_count, wrkt[i].rep_count))
-
                     }
                     var tempwork=new Workout(wrkt[0].workout_name, wrkt[0].workout_desc,
                         wrkt[0].category, wrkt[0].ExpLevel, wrkt[0].workout_length, wrkt[0].intensity,

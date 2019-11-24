@@ -8,6 +8,10 @@ import { WorkoutGeneratorRepository } from '../api/workoutGenRepo';
 import Logo from '../assets/logo.png';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
+const fetch = require("node-fetch");
+
+var url = "http://ec2-18-218-75-228.us-east-2.compute.amazonaws.com";
+
 function FailedLogin(props) {
   const isLoggedIn = props.isLoggedIn;
   if (isLoggedIn) {
@@ -18,7 +22,16 @@ function FailedLogin(props) {
   return <></>;
 }
 
-
+export async function getAccount(email) {
+	const response = await fetch(url + '/User/' + encodeURI(email))
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Could not connect');
+			}
+		})
+		.catch(error => { console.log(error); });
+	return response;
+}
 
 class Login extends Component {
   workoutGeneratorRepo = new WorkoutGeneratorRepository;
@@ -27,7 +40,7 @@ class Login extends Component {
         super(props);
 
         this.state = {
-          username: "",
+          username: "100005",
           password: "",
           failed_login:false
         };
@@ -42,17 +55,17 @@ class Login extends Component {
   handleSubmit = event => {
     event.preventDefault();
     // "lifter97","password"
-    this.workoutGeneratorRepo.getUserId(this.state.username,this.state.password).then(
+    getAccount(this.state.username,this.state.password).then(
 
       login_success => {
 
-        if (login_success){
+        if (!login_success){
           console.log("Login success will redirect now..")
           this.props.history.push(
             {
               pathname: '/home',
               state: {
-                accountId: login_success[0].user_id,
+                accountId: this.state.username,
               }
             }
           )
@@ -107,14 +120,14 @@ class Login extends Component {
               <Button type="submit" variant="success" style={{width: '100%', marginBottom: '1em'}}>
                 Login
               </Button>
-              <Button variant="dark" style={{width: '100%'}}>
+              
               <Link style={{color:'white', }}to={{
                   pathname: `/signup`,
                   state: {}
                 }}>
+                  <Button variant="dark" style={{width: '100%'}}>Create Account</Button>
                 Create Account
               </Link>
-              </Button>
 
             </Form>
 
