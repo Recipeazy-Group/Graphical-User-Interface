@@ -109,7 +109,7 @@ class Login extends Component {
       We'll never share your email with anyone.
     </Form.Text>
               </Form.Group>
-              <Form.Group controlId="password" bsSize="large">
+              <Form.Group controlId="password" bssize="large">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   value={this.state.password}

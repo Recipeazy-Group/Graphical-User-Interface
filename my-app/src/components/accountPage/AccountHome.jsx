@@ -42,8 +42,8 @@ function refreshPage() {
   window.location.reload(false);
 }
 
-function WorkoutButtons(props){
 
+function WorkoutButtons(props){
   return <>
   {props.workout.map((wrkt) =>
 
