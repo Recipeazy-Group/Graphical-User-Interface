@@ -48,7 +48,7 @@ function WorkoutButtons(props){
   {props.workout.map((wrkt) =>
 
     <Link className="btn btn-info btn-m btn-dark m-1" to={{
-        pathname: `/workoutpage/${wrkt[0]}`,
+        pathname: `/recipepage/${wrkt[0]}`,
         state: {
           "accountId": props.accountId
         }
@@ -143,7 +143,7 @@ class AccountHome extends Component {
         <tr>
           <td>
           <input type="text" className='form-control' name="name"
-                  id="name" placeholder="Ingredient name"
+                  id="name" placeholder="Ingredient name" style={{maxWidth:'70%'}}
                   value={this.state.nname} onChange={e => this.setState({ningred: e.target.value})}></input>
           </td>
         </tr>
