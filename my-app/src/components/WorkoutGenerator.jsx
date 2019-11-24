@@ -206,7 +206,7 @@ class WorkoutGenerator extends Component {
   }
   render() {
     return (<> < Navigation accountId={this.props.location.state.accountId} />
-    <h1>Generate Workout</h1>
+    <h1>Match Recipes</h1>
    <h2>  Focus</h2>
    <div className="overarching">
     <ToggleButtonGroup className="w-100 focus" name="Focus" id="category" type="radio" value={this.state.category} onChange={event => this.setState({category: [event]})}>

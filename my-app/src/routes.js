@@ -11,8 +11,7 @@ export const ROUTES = [
   { path: '/signup', component: Signup},
   { path: '/home', component: AccountHome},
   { path: '/workoutgen', component: WorkoutGenerator},
-  { path: '/workoutpage/:workoutId', component: WorkoutPage},
-  { path: '/workoutedit/:workoutId', component: WorkoutPageEdit},
+  { path: '/recipepage/:recipeId', component: WorkoutPage},
   { path: '/', component: Login},
 ];
 

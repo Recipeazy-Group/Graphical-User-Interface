@@ -42,10 +42,8 @@ function refreshPage() {
   window.location.reload(false);
 }
 
-function WorkoutButtons(props){
 
   return <>
-  {props.workout.map((wrkt) =>
 
     <Link className="btn btn-info btn-m btn-dark m-1" to={{
         pathname: `/workoutpage/${wrkt[0]}`,
@@ -71,7 +69,7 @@ class AccountHome extends Component {
     this.state = {
       avatar: '',
       bio: '',
-      workouts: [],
+      recipes: [],
       favorites: [],
       addOption: "Add",
       ningred: ''
@@ -113,10 +111,10 @@ class AccountHome extends Component {
                 <Col xs={12} sm={6} md={5} lg={5} xl={4}>                                 {/* Center Timeline */}
                   <Row>
                     {<Link
-                    style={{maxWidth: '100%', borderTop: '2em', borderBottom:'2em'}} 
+                    style={{maxWidth: '100%'}} 
                     className="btn btn-success btn-lg" 
                     to={{
-                      pathname: '/workoutgen',
+                      pathname: '/recipegen',
                       state: {
                         "accountId": this.props.location.state.accountId
                       }
@@ -127,7 +125,7 @@ class AccountHome extends Component {
                 <Col xs ={12} sm={6} md={5} lg={5} xl={4}>
                   <Row><h2 className="details" id="customs">Favorites</h2></Row>
                   <Row>
-                    <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.favorites}/>
+                    <RecipeButtons accountId={this.props.location.state.accountId} recipe={this.state.favorites}/>
                   </Row> 
                 </Col>
                 <Col xs={12} sm={6} md={5} lg={5} xl={4}>
