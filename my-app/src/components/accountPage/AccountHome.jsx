@@ -137,7 +137,7 @@ class AccountHome extends Component {
       <thead>
       </thead>
       <tbody>
-        
+                        {/* This is where you will map ingredients in tr tags*/}
       </tbody>
       <tfoot>
         <tr>
