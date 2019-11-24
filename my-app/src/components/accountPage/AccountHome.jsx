@@ -42,8 +42,10 @@ function refreshPage() {
   window.location.reload(false);
 }
 
+function RecipeButtons(props){
 
   return <>
+  {props.recipe.map((wrkt) =>
 
     <Link className="btn btn-info btn-m btn-dark m-1" to={{
         pathname: `/workoutpage/${wrkt[0]}`,
