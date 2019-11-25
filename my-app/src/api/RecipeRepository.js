@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-var url = "http://ec2-18-218-75-228.us-east-2.compute.amazonaws.com";
+var url = "http://ec2-18-218-75-228.us-east-2.compute.amazonaws.com:8000";
 
 
 //POST
@@ -97,87 +97,115 @@ export async function addRecipeImage(id, imgUrl) {
 
 //Get account by email
 export async function getAccount(email) {
+	let ok = true;
 	const response = await fetch(url + '/User/' + encodeURI(email))
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Could not connect');
 			}
-		})
-		.catch(error => { console.log(error); });
-	return response;
+		}).then(response => response.json())
+		.catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
 }
-
 //Get all recipe info by RecipeId
 export async function getRecipe(id) {
+	let ok = true;	
 	const response = await fetch(url + '/Recipe/' + id)
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Could not connect');
 			}
-		})
-		.catch(error => { console.log(error); });
-	return response;
+		}).then(response => response.json())
+		.catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
 }
 
 //Get all recipes
 export async function getRecipes() {
+	let ok = true;
 	const response = await fetch(url + '/Recipes')
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Could not connect');
 			}
-		})
-		.catch(error => { console.log(error); });
-	return response;
+		}).then(response => response.json())
+		.catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
 }
 
 //Get all images of a recipe
 export async function getRecipeImages(id) {
+	let ok = true;
 	const response = await fetch(url + '/RecipeImage/' + id)
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Could not connect');
 			}
-		})
-		.catch(error => { console.log(error); });
-	return response;
+		}).then(response => response.json())
+		.catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
 }
 
 //Get User Ingredients by email
 export async function getUserIngredients(email) {
+	let ok = true;
 	const response = await fetch(url + '/UserIngredients/' + encodeURI(email))
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Could not connect');
 			}
-		})
-		.catch(error => { console.log(error); });
-	return response;
+		}).then(response => response.json())
+		.catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
 }
 
 //Get recipes containting all user ingredients
 export async function getRecipesForUser(email) {
+	let ok = true;
 	const response = await fetch(url + '/Recipes/' + encodeURI(email))
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Could not connect');
 			}
-		})
-		.catch(error => { console.log(error); });
-	return response;
+		}).then(response => response.json())
+		.catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
 }
 
 //Get users favorite recipes
 export async function getFavoritedRecipes(email) {
+	let ok = true;
 	const response = await fetch(url + '/UserFavorites/' + encodeURI(email))
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Could not connect');
 			}
-		})
-		.catch(error => { console.log(error); });
-	return response;
+		}).then(response => response.json())
+		.catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
 }
+
+//Get list of recipes containing a specific ingredient
+export async function getRecipesByIngredient(ingred) {
+	let ok = true;
+	const response = await fetch(url + '/RecipesByIngredient/' + ingred)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Could not connect');
+			}
+		}).then(response => response.json())
+		.catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
+}
+
 
 //PUT
 //-----------------------------------------------------------------
@@ -220,8 +248,4 @@ export async function rateTaste(id, rating) {
 		})
 		.catch(error => { console.log(error); });
 	return response;
-}
-
-export default class fake{
-    
 }

@@ -69,17 +69,10 @@ class WorkoutGenerator extends Component {
 
 
   componentDidMount() {
-    //
-    // this.workoutGeneratorRepo.createNewExercise(103,{desc: "up and down boysssszzz", imageurl: "hello ", length: 4, name: "Jumping Jacks"})
-    // .then(new_exercise_id => this.workoutGeneratorRepo.addExerciseToWorkout({workout_id:103,exercise_id:new_exercise_id.exercise_id, rep_count: 8, set_count: 4}))
-    // .then(confirmation_id => alert(confirmation_id))
-    // this.workoutGeneratorRepo.createNewExercise(103,{desc: "up and down boysssszzz", imageurl: "hello ", length: 4, name: "Jumping Jacks"})
-    // this.workoutGeneratorRepo.addExerciseToWorkout({workout_id:103,exercise_id:100026, rep_count: 8, set_count: 4});
-
-// 100,026 exercise id
+  
 
     console.log("here is the passed in accountId: "+this.props.location.state.accountId)
-    //set up exercise for drop down
+
 
     this.workoutGeneratorRepo.getExercises().then( 
       exercises =>
@@ -96,42 +89,11 @@ class WorkoutGenerator extends Component {
 
 
     )
-
-
-/*
-
-  handleWorkoutGenerate(event) {
-
-
-
-    // this.state.category, this.state.expertise, this.state.intensity lower body, expert,3
-    this.workoutGeneratorRepo.getGeneratedWorkout(this.state.category, this.state.expertise, this.state.intensity).then(
-      workout => {
-        var temp=[]
-        // exercise_id
-
-        for(let exercise of workout){
-          temp.push(new Exercise(exercise.exercise_name, exercise.exercise_desc, exercise.exercise_image,exercise.default_length, exercise.sets,exercise.reps))
-        }
-        this.setState({ exerciseOptions: temp })
-      }
-   )
-
-
-    //generate the the workout using the button chosen parameters
-    
-*/
   }
   
 
   handleCustomAdditionSubmit(event) {
-    //add to generated workouts
-    // var loc_image=this.state.exerciseOptions.indexOf(this.state.customExerciseName)
-
-    // this.setState({custom_image_url:""});
-    // alert(this.state.custom_image_urls)
-
-
+  
 
     this.workoutGeneratorRepo.getExercisePic(this.state.customExerciseName).then(image =>
 
@@ -173,41 +135,6 @@ class WorkoutGenerator extends Component {
     await this.workoutGeneratorRepo.addWorkout(workout).then(workout_id => this.setState({createWorkoutID: workout_id}))
 
 
-
-
-
-
-    // this.workoutGeneratorRepo.setFavorite(userID, workoutID, favorite)
-
-
-
-    // for(let i=0;i<this.state.exercisesGenerated.length;i++){
-    //
-    //
-    //   this.workoutGeneratorRepo.createNewExercise(this.state.createWorkoutID,
-    //     {exercise_name:this.state.exerciseGenerate[i].name,
-    //       exercise_desc:this.state.exerciseGenerate[i].desc,
-    //       exercise_image:this.state.exerciseGenerate[i].imageUrl,
-    //       default_length:this.state.exerciseGenerate[i].length})
-    //   .then(ex_id =>
-    //     this.workoutGeneratorRepo.addExerciseToWorkout({
-    //       workout_id:this.state.createWorkoutID,
-    //       exercise_id:ex_id.exerciseID,
-    //       set_count:this.state.exerciseGenerate[i].sets,
-    //       rep_count:this.state.exerciseGenerate[i].reps})
-    //
-    //     )
-    //   alert("Add exerise: "+this.state.exercisesGenerated[i].toSource())
-    // }
-
-
-
-    // alert("Created workout " + this.state.createWorkoutID)
-    // this.workoutGeneratorRepo.addExerciseToWorkout(103,new Exercise("exercise_name", "exercise_desc", "https://data.whicdn.com/images/132534183/large.png",4, 8,4))
-  //add workout array to backend ----exercisesGenerated and all workout meta data
-  // addExerciseToWorkout
-
-
     this.setState({category: [], expertise: [], length: [], intensity: [], showAddWorkout:false});
 
     this.props.history.push(
@@ -218,6 +145,8 @@ class WorkoutGenerator extends Component {
         }
       })
   }
+
+  
 
 
   render() {
@@ -231,10 +160,11 @@ class WorkoutGenerator extends Component {
         </div>
         {/*
       <Button onClick={event => this.setState({ showAddExercise: true })} className="workgen" size="sm"  variant="outline-secondary">Add custom exercise</Button>
-      <Button onClick={event => this.setState({ showAddWorkout: true })} className="m-4" size="lg" variant="outline-success" >Add to Workouts</Button>*/}
+      <Button onClick={event => this.setState({ showAddWorkout: true })} className="m-4" size="lg" variant="outline-success" >Add to Workouts</Button> */}
 
     </ButtonToolbar>
 
+ 
     <hr></hr>
     <Modal show={this.state.showAddExercise} onHide={event => this.setState({ showAddExercise: false })}>
             <Modal.Header closeButton>
@@ -287,6 +217,7 @@ class WorkoutGenerator extends Component {
           </Modal>
 
     <h2>
+        
       Match Recipes
       <br></br>
 
