@@ -107,7 +107,8 @@ class AccountHome extends Component {
       addOption: "Add",
       ningred: [],
       nrecipeId: [],
-      ingredname: ''
+      ingredname: '',
+      recommend: []
 
 
     }
@@ -183,6 +184,9 @@ class AccountHome extends Component {
                     <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.favorites}/>
                   </Row> 
                   <Row><h2 className="details" id="customs">Reccomendations</h2></Row>
+                  <Row>
+                    <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.recommend}/>
+                  </Row> 
                 </Col>
                 <Col xs={12} sm={6} md={5} lg={5} xl={4}>
                 <Row><h2 className="details" id="customs">Ingredients</h2></Row>
