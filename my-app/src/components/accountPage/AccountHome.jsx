@@ -123,8 +123,6 @@ function refreshPage() {
 
 
 class AccountHome extends Component {
-
-  repo = new HomeRepository();
   currentAccount = new Account();
 
   constructor(props) {

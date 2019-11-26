@@ -70,7 +70,6 @@ async function getSteps(id) {
 }
 
 export class WorkoutPage extends React.Component{
-    workoutRepository = new WorkoutRepository;
     state = {
         recipe: new Recipe(
             "Jimbo's Fried Frog Legs",

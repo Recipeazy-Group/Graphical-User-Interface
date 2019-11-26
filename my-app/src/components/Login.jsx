@@ -60,8 +60,10 @@ class Login extends Component {
     getAccount(this.state.username,this.state.password).then(
 
       login_success => {
-
-        if (login_success[0].Email == this.state.username && login_success[0].UserPassword == this.state.password){
+        if(!login_success){
+          this.setState({failed_login: true})
+        }
+        else if (login_success[0].Email == this.state.username && login_success[0].UserPassword == this.state.password){
           
           console.log("Login success will redirect now..")
           this.props.history.push(
