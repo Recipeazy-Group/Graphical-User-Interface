@@ -19,7 +19,10 @@ async function getRecipe(id) {
 }
 
 class RecipePage extends Component {
-state= { }
+state= {
+recipeid: 0
+
+ }
 
 
 render() {
@@ -32,12 +35,13 @@ render() {
 <thead>
 </thead>
 <tbody>
-            {/* This is where you will map ingredients in tr tags*/}
+
 </tbody>
 <tfoot>
 <tr>
 <td>
 <h1> POOOP </h1>
+<h3> {console.log(getRecipe(this.state.recipeid))} </h3>
 </td>
 </tr>
 </tfoot>

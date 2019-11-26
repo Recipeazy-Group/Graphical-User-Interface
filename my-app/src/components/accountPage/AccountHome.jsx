@@ -73,19 +73,21 @@ async function getRecipe(id) {
 
 function WorkoutButtons(props){
   return <>
+
   {props.workout.map((wrkt) =>
 
     <Link className="btn btn-info btn-m btn-dark m-1" to={{
-        pathname: `/recipepage/${wrkt[0]}`,
+        pathname: `/recipepage/${wrkt.RecipeId}`,
         state: {
           "accountId": props.accountId
         }
       }}>
 
-      <h5>{wrkt[1]}</h5>
+      <h5>{wrkt.RecipeName}</h5>
     </Link>
-)  }
+)  } 
     </>
+   
 
 }
 
@@ -93,6 +95,7 @@ class AccountHome extends Component {
 
   repo = new HomeRepository();
   currentAccount = new Account();
+  recipes;
 
   constructor(props) {
     super(props);
@@ -102,12 +105,20 @@ class AccountHome extends Component {
       workouts: [],
       favorites: [],
       addOption: "Add",
-      ningred: '',
-      nrecipe: ''
+      ningred: [],
+      nrecipeId: [],
+      ingredname: ''
+
+
     }
   }
 
-
+  onIngredientsAdded(ingred) {
+    this.setState(prevState => {
+        prevState.ningred.push(ingred);
+        return prevState;
+    });
+}
   componentDidMount() {
 
     console.log("here is the passed in accountId: "+this.props.location.state.accountId)
@@ -130,6 +141,14 @@ class AccountHome extends Component {
     );
   }
 
+  onSubmit() {
+   var temp =  getRecipesByIngredient(this.state.ingredname);
+   this.setState({nrecipeId: temp })
+
+
+}
+
+
   render() {
     return (
         <>
@@ -145,51 +164,54 @@ class AccountHome extends Component {
 
                   <input type="text" className='form-control' name="search"
                   id="search" placeholder="Recipe search" style={{maxWidth:'70%'}}
-                  onChange={e => this.setState({ningred: e.target.value})}></input>
+                  onChange={e => this.setState({ingredname: e.target.value})}></input>
                     <br></br>
-                  {<Link
+                
+                  <Link
                     style={{maxWidth: '70%', borderTop: '2em', borderBottom:'2em'}} 
                     className="btn btn-block btn-success"
-                    onClick = {e => getRecipesByIngredient(this.state.ningred), refreshPage}> 
-                    to={{
-                      pathname: `/recipepage/:recipeId`,
-                      state: {
-                      "accountId": this.props.location.state.accountId 
-                      }
-                      //passin not real account right now
-                    }}>
-                   
-                    Enter</Link> }
-              
+                    onClick = {e=> this.onSubmit()}>
+                    Enter </Link>
+                    <Row>
+                    <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.nrecipeId}/>
+                   </Row>
 
                 </Col>
                 <Col xs ={12} sm={6} md={5} lg={5} xl={4}>
                   <Row><h2 className="details" id="customs">Favorites</h2></Row>
                   <Row>
-                   <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.favorites}/>
+                    <WorkoutButtons accountId={this.props.location.state.accountId} workout={this.state.favorites}/>
                   </Row> 
+                  <Row><h2 className="details" id="customs">Reccomendations</h2></Row>
                 </Col>
                 <Col xs={12} sm={6} md={5} lg={5} xl={4}>
                 <Row><h2 className="details" id="customs">Ingredients</h2></Row>
-                  <Row>
+                <Row>
+
       <table class = "table table-striped">
       <thead>
       </thead>
       <tbody>
-                        {/* This is where you will map ingredients in tr tags*/}
+      {this.state.ningred.map((item, i)=> 
+        <tr>
+          <td key = {i}>                {/* This is where you will map ingredients in tr tags*/}
+            {item}
+          </td>
+          </tr>)
+          }
       </tbody>
       <tfoot>
         <tr>
           <td>
           <input type="text" className='form-control' name="name"
                   id="name" placeholder="Ingredient name" style={{maxWidth:'70%'}}
-                  value={this.state.nname} onChange={e => this.setState({ningred: e.target.value})}></input>
+                  value={this.state.nname} onChange={e => this.setState({ ingredname: e.target.value }) }></input>
           </td>
         </tr>
       </tfoot>
     </table>
     <button id = "addAccount" class = "btn btn-block btn-success" 
-            onClick = {e => addUserIngredient(this.state.accountId, this.state.ningred), refreshPage}>
+            onClick = {e => this.onIngredientsAdded(this.state.ingredname)}>
             Add Ingredient</button>
                   </Row>
                 </Col>

@@ -10,7 +10,7 @@ import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
 const fetch = require("node-fetch");
 
-var url = "http://ec2-18-218-75-228.us-east-2.compute.amazonaws.com";
+var url = "http://ec2-18-218-75-228.us-east-2.compute.amazonaws.com:8000";
 
 function FailedLogin(props) {
   const isLoggedIn = props.isLoggedIn;
@@ -63,9 +63,9 @@ class Login extends Component {
           console.log("Login success will redirect now..")
           this.props.history.push(
             {
-              pathname: '/home',
+              pathname: `/home`,
               state: {
-                accountId: this.state.username,
+                accountId : this.state.username
               }
             }
           )
@@ -98,7 +98,7 @@ class Login extends Component {
       <div id="login" className="mx-auto">
             <Form onSubmit={this.handleSubmit}>
               <Form.Label>Username</Form.Label>
-              <Form.Group controlId="username" bsSize="large">
+              <Form.Group controlId="username" bssize="large">
                 <Form.Control
                   autoFocus
                   type="username"
