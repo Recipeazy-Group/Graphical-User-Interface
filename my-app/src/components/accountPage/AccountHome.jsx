@@ -11,7 +11,7 @@ import { Form, Modal} from 'react-bootstrap';
 const fetch = require("node-fetch");
 
 var url = "http://ec2-3-16-180-137.us-east-2.compute.amazonaws.com:8080";
-
+var mlUrl = "http://ec2-3-16-180-137.us-east-2.compute.amazonaws.com:5050";
 //Add User ingredient
 async function addUserIngredient(email, ingr) {
 	let ok = true;
@@ -90,6 +90,33 @@ async function getFavoritedRecipes(email) {
 	else return null;
 }
 
+//Get users recommendations
+async function getRecommendedRecipes(email, numSuggestions) {
+	let ok = true;
+	const response = await fetch(mlUrl + '/suggestionAPI/recipes?userID=' + email + "&numSuggestions=" + numSuggestions)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Could not connect');
+			} else return response.json();
+		}).catch(error => { ok = false; console.log(error); });
+	if (ok) {console.log(response); return response;}
+	else return null;
+}
+
+//Get recipes containting all user ingredients
+async function getRecipesForUser(email) {
+	let ok = true;
+	const response = await fetch(url + '/Recipes/' + encodeURI(email))
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Could not connect');
+			} else return response.json();
+		}).catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
+}
+
+
 function refreshPage() {
   window.location.reload(false);
 }
@@ -112,6 +139,7 @@ class AccountHome extends Component {
       nrecipeId: [],
       ingredname: '',
       recommend: [],
+      fulling: [],
       useremail:''
     }
   }
@@ -125,14 +153,19 @@ class AccountHome extends Component {
 }
 
 onSubmit() {
-  var temp =  getRecipesByIngredient(this.state.ingredname);
-  this.setState({nrecipeId: temp })
+  getRecipesByIngredient(this.state.ingredname).then(ingrep => {
+    var temp=[]
+    for(let workout of ingrep){
+      temp.push([workout.IngredientName, workout.recipeId])
+    }
+    this.setState({nrecipeId: ingrep })
+  })
 }
 
 
   componentDidMount() {
 
-    console.log("here is the passed in accountId: "+this.props.location.state.accountId)
+ 
 
     getAccount(this.props.location.state.accountId).then(ac =>{
       this.setState({
@@ -158,6 +191,22 @@ onSubmit() {
         this.setState({favorites: temp })
       }
     );
+    getRecommendedRecipes(this.props.location.state.accountId, 5).then(rec =>{
+      var temp=[]
+        for(let rep of rec){
+          temp.push([rep.ID, rep.title])
+        }
+        this.setState({recommend: temp})
+    }
+      );
+      getRecipesForUser(this.props.location.state.accountId).then(rec =>{
+        var temp=[]
+          for(let rep of rec){
+            temp.push([rep.RecipeId, rep.RecipeName])
+          }
+          this.setState({fulling: temp})
+      }
+        );
   }
 
   render() {
@@ -184,15 +233,16 @@ onSubmit() {
                     onClick = {e=> this.onSubmit()}>
                     Enter </Link>
                     <Row>
-                    {this.state.nrecipeId.map((wrkt) =>
+                    {this.state.nrecipeId.map((wrkt, i) =>
                     <Link className="btn btn-info btn-m btn-dark m-1" to={{
-                        pathname: `/recipepage/${this.state.nrecipeId.RecipeId}`,
+                        pathname: `/recipepage/${this.state.nrecipeId[i][1]}`,
                         state: {
-                          "accountId": this.state.useremail
+                          "accountId": this.state.useremail,
+                          "recipeId": this.state.nrecipeId[i][1]
                         }
                       }}>
 
-                      <h5>{this.state.nrecipeId.RecipeName}</h5>
+                      <h5>{this.state.nrecipeId[i][0]}</h5>
                     </Link>
                     )  }
                    </Row>
@@ -202,30 +252,32 @@ onSubmit() {
                   <Row><h2 className="details" id="customs">Favorites</h2></Row>
                   <Row>
                     
-                    {this.state.favorites.map((wrkt) =>
+                    {this.state.favorites.map((wrkt, i) =>
                     <Link className="btn btn-info btn-m btn-dark m-1" to={{
-                        pathname: `/recipepage/${this.state.favorites.RecipeId}`,
+                        pathname: `/recipepage/${this.state.favorites[i][0]}`,
                         state: {
-                          "accountId": this.state.useremail
+                          "accountId": this.state.useremail,
+                          "RecipeId": this.state.favorites[i][0]
                         }
                       }}>
 
-                      <h5>{this.state.favorites.RecipeName}</h5>
+                      <h5>{this.state.favorites[i][1]}</h5>
                     </Link>
                     )  }
                   </Row> 
-                  <Row><h2 className="details" id="customs">Reccomendations</h2></Row>
+                  <Row style={{marginTop:'1em'}}><h2 className="details" id="customs">Reccomendations</h2></Row>
                   <Row>
                     
-                    {this.state.recommend.map((wrkt) =>
+                    {this.state.recommend.map((wrkt, i) =>
                     <Link className="btn btn-info btn-m btn-dark m-1" to={{
-                        pathname: `/recipepage/${this.state.recommend.RecipeId}`,
+                        pathname: `/recipepage/${this.state.recommend[i][0]}`,
                         state: {
-                          "accountId": this.state.useremail
+                          "accountId": this.state.useremail,
+                          "recipeId": this.state.recommend[i][0]
                         }
                       }}>
 
-                      <h5>{this.state.recommend.RecipeName}</h5>
+                      <h5>{this.state.recommend[i][1]}</h5>
                     </Link>
                     )  }
                   </Row> 
@@ -256,6 +308,23 @@ onSubmit() {
             onClick = {e => this.onIngredientsAdded(this.state.ingredname)}>
             Add Ingredient</button>
                   </Row>
+                  <Row style={{marginTop:'2em'}}>
+                <h2 className="details">Pantry Search</h2>
+              </Row>
+              {this.state.fulling.map((wrkt, i) =>
+              <Row>
+                    <Link className="btn btn-info btn-m btn-dark m-1" to={{
+                        pathname: `/recipepage/${this.state.fulling[i][0]}`,
+                        state: {
+                          "accountId": this.state.useremail,
+                          "recipeId": this.state.fulling[i][0]
+                        }
+                      }}>
+
+                      <h5>{this.state.fulling[i][1]}</h5>
+                    </Link>
+                    </Row>
+                    )  }
                 </Col>
 
               </Row>

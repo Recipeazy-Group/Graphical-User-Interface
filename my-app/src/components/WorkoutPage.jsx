@@ -56,32 +56,10 @@ async function getRecipe(id) {
 	else return null;
 }
 
-//Get all images of a recipe
-async function getRecipeImages(id) {
+//Get account by email
+async function getSteps(id) {
 	let ok = true;
-	const response = await fetch(url + '/RecipeImage/RecipeId?RecipeId=' + id)
-		.then(response => {
-			if (!response.ok) {
-				throw new Error('Could not connect');
-			} else return response.json();
-		}).catch(error => { ok = false; console.log(error); });
-	if (ok) return response;
-	else return null;
-}
-
-//Add recipe image
-async function addRecipeImage(id, imgUrl) {
-	let ok = true;
-	let head = new Headers();
-	head.append('ImageUrl', imgUrl);
-	head.append('RecipeId', id);
-
-	const init = {
-		method: 'POST',
-		headers: head
-	}
-
-	const response = await fetch(url + '/RecipeImage/new', init)
+	const response = await fetch(url + '/Steps/RecipeId?RecipeId=' + id)
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Could not connect');
@@ -107,15 +85,19 @@ export class WorkoutPage extends React.Component{
                 "3. Fry Frog legs in skillet until inner temp reaches 150 F"
             ],
             "Easy",
-            3
+            0
         ),
+        recname:'',
+        ingredients: [],
         wrkt: [],
+        test: [],
+        steps: [],
         beginClk: false,
         pauseClk: false,
         btnCol: {background: 'dodgerblue', maxWidth: '50%'},
         btnWord: "Start",
-        rating: 3,
-        difficulty: 2,
+        rating: 0,
+        difficulty: 1,
         accountId: 0,
         ingrdnam:['Frog Legs', 'Paprika', ' black pepper', 'Cayenne', 'Oil']
 
@@ -123,7 +105,6 @@ export class WorkoutPage extends React.Component{
 
     newRating = (rat) => {
         let workoutId = +this.props.match.params.workoutId;
-        this.workoutRepository.updateRating(workoutId, rat);
         this.setState({
             rating: rat
         })
@@ -131,7 +112,6 @@ export class WorkoutPage extends React.Component{
 
     newDifficulty = (dif) => {
         let workoutId = +this.props.match.params.workoutId;
-        this.workoutRepository.updateDifficulty(workoutId, dif);
         if(dif == 1){
             this.setState({
                 difficulty: "Easy"
@@ -163,23 +143,8 @@ export class WorkoutPage extends React.Component{
 
                     </Row>
                 </Col>                                {/* Left Side Close */}
-                <Col md={10} style={{background:'dark', display:'block'}}>                                 {/* Right Side */}
+                <Col md={10} style={{background:'dark', display:'block', marginBottom:'2em'}}>                                 {/* Right Side */}
                     <Container>
-                        <Row style={{display:'block', marginBottom:'2em'}}>
-                            <Carousel>
-                            {this.state.recipe.image.map((ex) =>
-                            <Carousel.Item>
-
-                            </Carousel.Item>
-                             )}
-                            </Carousel>
-                        <img
-                        style={{maxWidth: '100%', height: 'auto'}}
-                        className="mr-3"
-                        src={this.state.recipe.image}
-                        alt="Profile"
-                      />
-                        </Row>
                         <Row style={{display:'block'}}>
                             <h1>{this.state.recipe.name}</h1>
                             <Rating value = {this.state.rating} />
@@ -210,32 +175,29 @@ export class WorkoutPage extends React.Component{
                         </Row>
                         <Row style={{display:'block', marginBottom:'2em'}}>
                             <button id = "addAccount" class = "btn btn-block btn-success" 
-                            onClick = {e => addUserFavorite(this.state.accountId, this.state.recipe.description)}>
+                            onClick = {e => addUserFavorite(this.state.accountId, this.state.recipe.description)}
+                            style={{marginTop:'0.5em'}}>
                             Add to Favorites</button>
                         </Row>
                         
                         {this.state.recipe.ingredients.map((ex) => 
                             <Row>
                             <div class="dropdown">
-                            <button class="dropbtn">{ex}</button>
+                            <button class="dropbtn btn-dark btn-md">{ex}</button>
                                 <div class="dropdown-content">
-                                    {this.state.others.map((thing) =>
-                                    <h5>
-                                        {thing}
-                                    </h5>
-                                    )}
+                                    
                                 </div>
                             </div>
                             </Row>
                             
                             
-                        )}
+                                    )}
                         
                         <Row> </Row>
                     </Container>
                 </Col>                                {/* Right Side Close */}
               </Row>
-                {this.state.recipe.steps.map((ex) =>
+                {this.state.steps.map((ex) =>
                 <Row>
                     <Col md={2} style={{position:'relative', marginBottom:'3em'}}>
                         <div className = "form">
@@ -244,6 +206,7 @@ export class WorkoutPage extends React.Component{
                     </Col>
                     <Col md={10}>
                         <h4>{ex}</h4>
+                        <br></br>
                     </Col>
                 </Row>
 
@@ -257,26 +220,32 @@ export class WorkoutPage extends React.Component{
 
 
     componentDidMount() {
-        let workoutId = +this.props.match.params.workoutId;
-        if (workoutId) {
+        let workoutId = +this.props.match.params.recipeId;
+        
             getRecipe(workoutId)
                 .then(wrkt => {
                     var temp=[]
-                    var otemp=[]
-                    for(let i=0;i<wrkt.length;i++){
-                      temp.push(wrkt[i].IngredientName)
-                      otemp.push(wrkt[i].Step)
+                    for(let i=1;i<wrkt.length;i++){
+                      temp.push(wrkt[i].IngredientInfo)
                     }
-                    var tempwork=new Recipe(wrkt[0].RecipeName, workoutId,
-                        wrkt[0].imageUrl, temp, otemp, wrkt[0].DifficultyRatingTotal,
-                        wrkt[0].TastyRatingTotal
-                        )
-                    this.setState({ recipe: tempwork,
-                                    rating: tempwork.rating,
-                                    comment: tempwork.comments,
+
+                    var rec = new Recipe(wrkt[0].RecipeName, this.props.location.state.recipeId, '', temp, '', '', '')
+                    this.setState({ recname: wrkt[0].RecipeName,
+                                    recipe: rec,
+                                    ingredients: temp,
                                     accountId: this.props.location.state.accountId})
                   });
-        }
+            getSteps(workoutId)
+                  .then(rec =>{
+                      var temp =[]
+                      for(let i=0; i<rec.length;i++){
+                          temp.push(rec[i].Step)
+                      }
+                    this.setState({
+                        steps: temp
+                    })
+                  })
+        
     }
 }
 
