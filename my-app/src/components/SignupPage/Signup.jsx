@@ -8,34 +8,58 @@ import Navigationunlog from './NavigationUnlog';
 import {SignupRepository} from './../../api/SignupRepository';
 import Logo from './../../assets/logo.png';
 import { Link } from 'react-router-dom';
-import addUser from './../../api/RecipeRepository';
+
+const fetch = require("node-fetch");
+
+var url = "http://ec2-3-16-180-137.us-east-2.compute.amazonaws.com:8080";
 
 
+//Add User
+async function addUser(firstName, lastName, email, pass) {
+	let ok = true;
+	const data = {
+		FirstName: firstName,
+		LastName: lastName, 
+		Email: email,
+		UserPassword: pass
+	};
+
+	const init = {
+		method: 'POST',
+    		body: JSON.stringify(data),
+		headers: {
+      			'Content-Type': 'application/json'
+    		}
+	}
+
+	const response = await fetch(url + '/User/new', init)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Could not connect');
+			} else return response.json();
+		}).catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
+}
 
 class Signup extends React.Component {
   signupRepository = new SignupRepository;
   state = {
     nname: '',
-    nusername: '',
+    nlname:'',
     npassword: '',
+    nemail:'',
     imag: 'https://placehold.it/150x150',
     id: ''
   };
 
 
   newAcc = event =>{
-    var acc = {
-      name: this.state.nname,
-      username: this.state.nusername,
-      password: this.state.npassword,
-      image: this.state.imag
-    }
     this.setState({
-      id: this.signupRepository.addAccount(acc)
+      id: this.state.nemail
     })
+    addUser(this.state.nname,this.state.nlname,this.state.nemail,this.state.npassword)
   }
-
-
 
   render() {
     return (
@@ -56,13 +80,16 @@ class Signup extends React.Component {
                   id="name" placeholder="First name"
                   value={this.state.nname} onChange={e => this.setState({nname: e.target.value})}></input>
               </div>
-              <div class="form-group">
-                <label htmlFor="username"></label>
-                <input type="text" className='form-control' name="Username" id="username" placeholder="Last name"></input>
+              <div className="form-group">
+                  <label htmlFor="name"></label>
+                  <input type="text" className='form-control' name="name"
+                  id="name" placeholder="Last name"
+                  value={this.state.nlname} onChange={e => this.setState({nlname: e.target.value})}></input>
               </div>
               <div class="form-group">
-                <label htmlFor="email"></label>
-                <input type="email" className='form-control' name="Email" id="email" placeholder="Email"></input>
+                <label htmlFor="username"></label>
+                <input type="email" className='form-control' name="Email" id="email" placeholder="Username"
+                value={this.state.nemail} onChange={e => this.setState({nemail: e.target.value})}></input>
               </div>
               <div className="form-group">
                 <label htmlFor="password"></label>
@@ -70,9 +97,10 @@ class Signup extends React.Component {
                 id="password" type="password" placeholder="Password"
                 value={this.state.npassword} onChange={e => this.setState({npassword: e.target.value})}></input>
               </div>
-              <Link style={{marginTop:'1em'}} className="btn btn-success" to={{
+              <Link style={{marginTop:'1em'}} className="btn btn-success" 
+              onClick={e=> this.newAcc()} to={{
                   pathname: `/`,
-                  //passin not real account right now
+                  //return to login is easiest
                 }}>
                 <h3>Create Account</h3>
               </Link>

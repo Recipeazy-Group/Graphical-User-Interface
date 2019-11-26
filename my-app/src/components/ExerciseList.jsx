@@ -30,12 +30,11 @@ function ExerciseCard(props) {
 }
 
 function ExerciseList(props) {
-return (
- <div className="card-group">
+
+  return <div class="card-group">
     {props.onExerciseSelected}
     {props.exercises.map((ex) => <ExerciseCard onExerciseSelection={() => props.onExerciseSelected} name={ex.name} desc={ex.desc} imageUrl={ex.imageUrl} length={ex.length} sets={ex.sets} reps={ex.reps}/>)}
   </div>
-)
 }
 
 export {

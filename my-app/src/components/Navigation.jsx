@@ -23,6 +23,7 @@ class Navigation extends Component {
             src={Logo}
             width="100"
             className="d-inline-block align-top"
+            style={{marginLeft:'0.5em'}}
             />
 
 
@@ -39,6 +40,7 @@ class Navigation extends Component {
                       src={Logo}
                       width="100"
                       className="d-inline-block align-top"
+                      style={{marginLeft:'0.5em'}}
                   />
 
 

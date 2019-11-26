@@ -33,8 +33,9 @@ class WorkoutGenerator extends Component {
       expertise: ["Expert"],
       length: [30],
       intensity: [3],
-      exercisesGenerated: [],
-      filteredExercises: [],
+      exercisesGenerated: [
+
+      ],
       //these are the exercise that have been kept
       chosenExercises:[],
       showAddExercise:false,
@@ -53,47 +54,70 @@ class WorkoutGenerator extends Component {
       exerciseOptions:[],
       custom_image_url:"https://via.placeholder.com/150"
     };
+    this.handleWorkoutGenerate = this.handleWorkoutGenerate.bind(this);
     this.handleCustomAdditionSubmit = this.handleCustomAdditionSubmit.bind(this);
     this.handleWorkoutSubmit = this.handleWorkoutSubmit.bind(this);
   }
-
-
-  filterList = (event) => {
-    let items = this.state.exerciseOptions;
-    items = items.filter((item) => {
-      return item.toLowerCase().search(event.target.value.toLowerCase()) !== -1;
-    });
-    this.setState({filteredExercises: items});
-  }
-
-
-
   componentDidMount() {
-  
+    //
+    // this.workoutGeneratorRepo.createNewExercise(103,{desc: "up and down boysssszzz", imageurl: "hello ", length: 4, name: "Jumping Jacks"})
+    // .then(new_exercise_id => this.workoutGeneratorRepo.addExerciseToWorkout({workout_id:103,exercise_id:new_exercise_id.exercise_id, rep_count: 8, set_count: 4}))
+    // .then(confirmation_id => alert(confirmation_id))
+    // this.workoutGeneratorRepo.createNewExercise(103,{desc: "up and down boysssszzz", imageurl: "hello ", length: 4, name: "Jumping Jacks"})
+    // this.workoutGeneratorRepo.addExerciseToWorkout({workout_id:103,exercise_id:100026, rep_count: 8, set_count: 4});
+
+// 100,026 exercise id
 
     console.log("here is the passed in accountId: "+this.props.location.state.accountId)
+    //set up exercise for drop down
 
-
-    this.workoutGeneratorRepo.getExercises().then( 
+    this.workoutGeneratorRepo.getExercises().then(
       exercises =>
       {
         var temp=[]
-        
         for(let i=0;i<exercises.length;i++){
           temp.push(exercises[i].exercise_name)
         }
         this.setState({ exerciseOptions: temp })
-        
-       
       }
 
 
-    )
-  }
-  
+    );
 
+
+  }
+
+
+
+  handleWorkoutGenerate(event) {
+
+
+
+    // this.state.category, this.state.expertise, this.state.intensity lower body, expert,3
+    this.workoutGeneratorRepo.getGeneratedWorkout(this.state.category, this.state.expertise, this.state.intensity).then(
+      workout => {
+        var temp=[]
+        // exercise_id
+
+        for(let exercise of workout){
+          temp.push(new Exercise(exercise.exercise_name, exercise.exercise_desc, exercise.exercise_image,exercise.default_length, exercise.sets,exercise.reps))
+        }
+        this.setState({ exercisesGenerated: temp })
+      }
+    )
+
+
+    //generate the the workout using the button chosen parameters
+
+  }
   handleCustomAdditionSubmit(event) {
-  
+    //add to generated workouts
+    // var loc_image=this.state.exerciseOptions.indexOf(this.state.customExerciseName)
+
+    // this.setState({custom_image_url:""});
+    // alert(this.state.custom_image_urls)
+
+
 
     this.workoutGeneratorRepo.getExercisePic(this.state.customExerciseName).then(image =>
 
@@ -135,6 +159,41 @@ class WorkoutGenerator extends Component {
     await this.workoutGeneratorRepo.addWorkout(workout).then(workout_id => this.setState({createWorkoutID: workout_id}))
 
 
+
+
+
+
+    // this.workoutGeneratorRepo.setFavorite(userID, workoutID, favorite)
+
+
+
+    // for(let i=0;i<this.state.exercisesGenerated.length;i++){
+    //
+    //
+    //   this.workoutGeneratorRepo.createNewExercise(this.state.createWorkoutID,
+    //     {exercise_name:this.state.exerciseGenerate[i].name,
+    //       exercise_desc:this.state.exerciseGenerate[i].desc,
+    //       exercise_image:this.state.exerciseGenerate[i].imageUrl,
+    //       default_length:this.state.exerciseGenerate[i].length})
+    //   .then(ex_id =>
+    //     this.workoutGeneratorRepo.addExerciseToWorkout({
+    //       workout_id:this.state.createWorkoutID,
+    //       exercise_id:ex_id.exerciseID,
+    //       set_count:this.state.exerciseGenerate[i].sets,
+    //       rep_count:this.state.exerciseGenerate[i].reps})
+    //
+    //     )
+    //   alert("Add exerise: "+this.state.exercisesGenerated[i].toSource())
+    // }
+
+
+
+    // alert("Created workout " + this.state.createWorkoutID)
+    // this.workoutGeneratorRepo.addExerciseToWorkout(103,new Exercise("exercise_name", "exercise_desc", "https://data.whicdn.com/images/132534183/large.png",4, 8,4))
+  //add workout array to backend ----exercisesGenerated and all workout meta data
+  // addExerciseToWorkout
+
+
     this.setState({category: [], expertise: [], length: [], intensity: [], showAddWorkout:false});
 
     this.props.history.push(
@@ -145,26 +204,55 @@ class WorkoutGenerator extends Component {
         }
       })
   }
-
-  
-
-
   render() {
     return (<> < Navigation accountId={this.props.location.state.accountId} />
+    <h1>Match Recipes</h1>
+   <h2>  Focus</h2>
+   <div className="overarching">
+    <ToggleButtonGroup className="w-100 focus" name="Focus" id="category" type="radio" value={this.state.category} onChange={event => this.setState({category: [event]})}>
+      <ToggleButton className="big-buttons" value={"upper body"}>Upper body </ToggleButton>
+      <ToggleButton className="big-buttons" value={"lower body"}>Lower body </ToggleButton>
+      <ToggleButton className="big-buttons" value={"full body"}>Full body </ToggleButton>
+      <ToggleButton className="big-buttons" value={"cardio"}>Cardio</ToggleButton>
+      <ToggleButton className="big-buttons" value={"abdominals"}>Core</ToggleButton>
+    </ToggleButtonGroup>
 
+    <h2>
+      Expertise
+    </h2>
+    <ToggleButtonGroup className="w-75 expertise" name="Expertise" type="radio" value={this.state.expertise} onChange={event => this.setState({expertise: [event]})}>
+      <ToggleButton className="level-buttons" value={"Beginner"}>Beginner</ToggleButton>
+      <ToggleButton className="level-buttons" value={"Novice"}>Novice</ToggleButton>
+      <ToggleButton className="level-buttons" value={"Intermediate"}>Intermediate</ToggleButton>
+      <ToggleButton className="level-buttons" value={"Expert"}>Expert</ToggleButton>
+    </ToggleButtonGroup>
+
+    <h2>
+      Length
+    </h2>
+    <ToggleButtonGroup className="length" name="Length" type="radio" value={this.state.length} onChange={event => this.setState({length: [event]})}>
+      <ToggleButton value={30}>30 min</ToggleButton>
+      <ToggleButton value={60}>60 min</ToggleButton>
+      <ToggleButton value={90}>90 min</ToggleButton>
+      <ToggleButton value={120}>120 min</ToggleButton>
+    </ToggleButtonGroup>
+
+    <h2>
+      Intensity
+    </h2>
+    <ToggleButtonGroup className="intensity" name="Intensity" type="radio" value={this.state.intensity} onChange={event => this.setState({intensity: [event]})}>
+      <ToggleButton value={1}>Easy</ToggleButton>
+      <ToggleButton value={2}>Medium</ToggleButton>
+      <ToggleButton value={3}>Hard</ToggleButton>
+    </ToggleButtonGroup>
+    </div>
     <ButtonToolbar bsPrefix="inline-flex">
-      <div>
-          <form>
-                <input type="text" placeholder="Search" onChange={this.filterList}/>
-          </form>
-        </div>
-        {/*
-      <Button onClick={event => this.setState({ showAddExercise: true })} className="workgen" size="sm"  variant="outline-secondary">Add custom exercise</Button>
-      <Button onClick={event => this.setState({ showAddWorkout: true })} className="m-4" size="lg" variant="outline-success" >Add to Workouts</Button> */}
+      <Button onClick={this.handleWorkoutGenerate} className="workgen" size="lg" variant="outline-primary">Generate Workout</Button>
+      <Button onClick={event => this.setState({ showAddExercise: true })} className="workgen" size="lg"  variant="outline-secondary">Add custom exercise</Button>
+      {/*<Button onClick={event => this.setState({ showAddWorkout: true })} className="m-4" size="lg" variant="outline-success" >Add to Workouts</Button>*/}
 
     </ButtonToolbar>
 
- 
     <hr></hr>
     <Modal show={this.state.showAddExercise} onHide={event => this.setState({ showAddExercise: false })}>
             <Modal.Header closeButton>
@@ -217,20 +305,10 @@ class WorkoutGenerator extends Component {
           </Modal>
 
     <h2>
-        
-      Match Recipes
+      Current Exercises
       <br></br>
-
-      <div>
-            {
-                this.state.filteredExercises.map(function(item) {
-                    return <div key={item}>{item}</div>
-                })
-            }
-     </div>
-
     </h2>
-    <ExerciseList exercises={this.state.filteredExercises} onExerciseSelected=
+    <ExerciseList exercises={this.state.exercisesGenerated} onExerciseSelected=
        {(exerciseName) =>
          {
 

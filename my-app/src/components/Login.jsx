@@ -10,7 +10,7 @@ import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
 const fetch = require("node-fetch");
 
-var url = "http://ec2-18-218-75-228.us-east-2.compute.amazonaws.com:8000";
+var url = "http://ec2-3-16-180-137.us-east-2.compute.amazonaws.com:8080";
 
 function FailedLogin(props) {
   const isLoggedIn = props.isLoggedIn;
@@ -22,15 +22,17 @@ function FailedLogin(props) {
   return <></>;
 }
 
-export async function getAccount(email) {
-	const response = await fetch(url + '/User/' + encodeURI(email))
+//Get account by email
+async function getAccount(email) {
+	let ok = true;
+	const response = await fetch(url + '/User/Email?Email=' + encodeURI(email))
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Could not connect');
-			}
-		})
-		.catch(error => { console.log(error); });
-	return response;
+			} else return response.json();
+		}).catch(error => { ok = false; console.log(error); });
+	if (ok) return response;
+	else return null;
 }
 
 class Login extends Component {
@@ -40,7 +42,7 @@ class Login extends Component {
         super(props);
 
         this.state = {
-          username: "100005",
+          username: "",
           password: "",
           failed_login:false
         };
@@ -59,13 +61,14 @@ class Login extends Component {
 
       login_success => {
 
-        if (!login_success){
+        if (login_success[0].Email == this.state.username && login_success[0].UserPassword == this.state.password){
+          
           console.log("Login success will redirect now..")
           this.props.history.push(
             {
-              pathname: `/home`,
+              pathname: '/home',
               state: {
-                accountId : this.state.username
+                accountId: this.state.username,
               }
             }
           )
@@ -95,21 +98,29 @@ class Login extends Component {
                   />
 
       <h2> Sign in to Recipeazy</h2>
+      <Link style={{color:'white', }}to={{
+                  pathname: `/recipepage/107`,
+                  state: {
+                    accountId: 1001
+                  }
+                }}>
+                Create Account
+              </Link>
       <div id="login" className="mx-auto">
             <Form onSubmit={this.handleSubmit}>
-              <Form.Label>Username</Form.Label>
-              <Form.Group controlId="username" bssize="large">
+              <Form.Label>Email</Form.Label>
+              <Form.Group controlId="username" bsSize="large">
                 <Form.Control
                   autoFocus
                   type="username"
-                  value={this.state.email}
+                  value={this.state.username}
                   onChange={this.handleChange}
                 />
                 <Form.Text className="text-muted">
       We'll never share your email with anyone.
     </Form.Text>
               </Form.Group>
-              <Form.Group controlId="password" bssize="large">
+              <Form.Group controlId="password" bsSize="large">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   value={this.state.password}
